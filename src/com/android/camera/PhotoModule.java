@@ -2521,10 +2521,17 @@ public class PhotoModule
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {
             case KeyEvent.KEYCODE_VOLUME_UP:
-            case KeyEvent.KEYCODE_VOLUME_DOWN:
-                if (CameraUtil.volumeKeyShutterDisable(mActivity)) {
-                   return false;
+                if (/*TODO: mActivity.isInCameraApp() &&*/ mFirstTimeInitialized
+                    && (mUI.mMenuInitialized)) {
+                    mUI.onScaleStepResize(true);
                 }
+                return true;
+            case KeyEvent.KEYCODE_VOLUME_DOWN:
+                if (/*TODO: mActivity.isInCameraApp() &&*/ mFirstTimeInitialized
+                    && (mUI.mMenuInitialized)) {
+                    mUI.onScaleStepResize(false);
+                }
+                return true;
             case KeyEvent.KEYCODE_FOCUS:
                 if (/*TODO: mActivity.isInCameraApp() &&*/ mFirstTimeInitialized) {
                     if (event.getRepeatCount() == 0) {
@@ -2600,12 +2607,7 @@ public class PhotoModule
         switch (keyCode) {
             case KeyEvent.KEYCODE_VOLUME_UP:
             case KeyEvent.KEYCODE_VOLUME_DOWN:
-                if (/*mActivity.isInCameraApp() && */ mFirstTimeInitialized
-                        && !CameraUtil.volumeKeyShutterDisable(mActivity)) {
-                    onShutterButtonClick();
-                    return true;
-                }
-                return false;
+                return true;
             case KeyEvent.KEYCODE_FOCUS:
                 if (mFirstTimeInitialized) {
                     onShutterButtonFocus(false);
