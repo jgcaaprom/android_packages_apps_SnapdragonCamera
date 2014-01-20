@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 The Android Open Source Project
+ * Copyright (C) 2013-2015 The CyanogenMod Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -457,6 +458,9 @@ public class VideoModule implements CameraModule,
         resetExposureCompensation();
 
         mOrientationManager = new OrientationManager(mActivity);
+
+        // Power shutter
+        mActivity.initPowerShutter(mPreferences);
 
         /*
          * To reduce startup time, we start the preview in another thread.
@@ -1410,6 +1414,11 @@ public class VideoModule implements CameraModule,
         switch (keyCode) {
             case KeyEvent.KEYCODE_CAMERA:
                 mUI.pressShutter(false);
+                return true;
+            case KeyEvent.KEYCODE_POWER:
+                if (CameraActivity.mPowerShutter) {
+                    onShutterButtonClick();
+                }
                 return true;
         }
         return false;
@@ -2708,6 +2717,7 @@ public class VideoModule implements CameraModule,
             Storage.setSaveSDCard(
                 mPreferences.getString(CameraSettings.KEY_CAMERA_SAVEPATH, "0").equals("1"));
             mActivity.updateStorageSpaceAndHint();
+            mActivity.initPowerShutter(mPreferences);
         }
     }
 
