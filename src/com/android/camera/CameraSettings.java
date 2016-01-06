@@ -60,6 +60,7 @@ public class CameraSettings {
     public static final String KEY_PICTURE_SIZE = "pref_camera_picturesize_key";
     public static final String KEY_JPEG_QUALITY = "pref_camera_jpegquality_key";
     public static final String KEY_FOCUS_MODE = "pref_camera_focusmode_key";
+    public static final String KEY_VIDEO_FOCUS_MODE = "pref_video_focusmode_key";
     public static final String KEY_FLASH_MODE = "pref_camera_flashmode_key";
     public static final String KEY_VIDEOCAMERA_FLASH_MODE = "pref_camera_video_flashmode_key";
     public static final String KEY_WHITE_BALANCE = "pref_camera_whitebalance_key";
@@ -195,6 +196,8 @@ public class CameraSettings {
     public static final String KEY_MANUAL_WB_MODES = "manual-wb-modes";
     public static final String KEY_MANUAL_FOCUS_MODES = "manual-focus-modes";
     //manual exposure
+    public static final String KEY_SHUTTER_SPEED = "pref_camera_shutter_speed_key";
+    //HAL3 manual exposure
     public static final String KEY_MIN_EXPOSURE_TIME = "min-exposure-time";
     public static final String KEY_MAX_EXPOSURE_TIME = "max-exposure-time";
     public static final String KEY_EXPOSURE_TIME = "exposure-time";
@@ -238,6 +241,9 @@ public class CameraSettings {
     public static final String KEY_TS_MAKEUP_LEVEL_WHITEN  = "pref_camera_tsmakeup_whiten";
     public static final String KEY_TS_MAKEUP_LEVEL_CLEAN   = "pref_camera_tsmakeup_clean";
 
+    public static final String KEY_TOUCH_FOCUS_DURATION = "pref_camera_touchfocus_duration_key";
+    public static final String KEY_VIDEO_TOUCH_FOCUS_DURATION = "pref_video_touchfocus_duration_key";
+
     public static final String EXPOSURE_DEFAULT_VALUE = "0";
 
     public static final int CURRENT_VERSION = 5;
@@ -261,25 +267,66 @@ public class CameraSettings {
 
     static {
         //video encoders
-        VIDEO_ENCODER_TABLE.put(MediaRecorder.VideoEncoder.H263, "h263");
+        //VIDEO_ENCODER_TABLE.put(MediaRecorder.VideoEncoder.H263, "h263");
         VIDEO_ENCODER_TABLE.put(MediaRecorder.VideoEncoder.H264, "h264");
-        VIDEO_ENCODER_TABLE.put(MediaRecorder.VideoEncoder.H265, "h265");
-        VIDEO_ENCODER_TABLE.put(MediaRecorder.VideoEncoder.MPEG_4_SP, "m4v");
+        //VIDEO_ENCODER_TABLE.put(MediaRecorder.VideoEncoder.H265, "h265");
+        //VIDEO_ENCODER_TABLE.put(MediaRecorder.VideoEncoder.MPEG_4_SP, "m4v");
 
         //video qualities
-        VIDEO_QUALITY_TABLE.put("4096x2160", CamcorderProfile.QUALITY_4kDCI);
+        VIDEO_QUALITY_TABLE.put("4096x2160", CamcorderProfile.QUALITY_4KDCI);
         VIDEO_QUALITY_TABLE.put("3840x2160", CamcorderProfile.QUALITY_2160P);
         VIDEO_QUALITY_TABLE.put("1920x1080", CamcorderProfile.QUALITY_1080P);
         VIDEO_QUALITY_TABLE.put("1280x720",  CamcorderProfile.QUALITY_720P);
         VIDEO_QUALITY_TABLE.put("720x480",   CamcorderProfile.QUALITY_480P);
-        VIDEO_QUALITY_TABLE.put("864x480",   CamcorderProfile.QUALITY_FWVGA);
-        VIDEO_QUALITY_TABLE.put("800x480",   CamcorderProfile.QUALITY_WVGA);
         VIDEO_QUALITY_TABLE.put("640x480",   CamcorderProfile.QUALITY_VGA);
-        VIDEO_QUALITY_TABLE.put("480x360",   CamcorderProfile.QUALITY_HVGA);
-        VIDEO_QUALITY_TABLE.put("400x240",   CamcorderProfile.QUALITY_WQVGA);
         VIDEO_QUALITY_TABLE.put("352x288",   CamcorderProfile.QUALITY_CIF);
         VIDEO_QUALITY_TABLE.put("320x240",   CamcorderProfile.QUALITY_QVGA);
         VIDEO_QUALITY_TABLE.put("176x144",   CamcorderProfile.QUALITY_QCIF);
+   }
+
+   // Following maps help find a corresponding time-lapse or high-speed quality
+   // given a normal quality.
+   // Ideally, one should be able to traverse by offsetting +1000, +2000 respectively,
+   // But the profile values are messed-up in AOSP
+   private static final HashMap<Integer, Integer>
+       VIDEO_QUALITY_TO_TIMELAPSE = new HashMap<Integer, Integer>();
+   static {
+        VIDEO_QUALITY_TO_TIMELAPSE.put(CamcorderProfile.QUALITY_LOW  , CamcorderProfile.QUALITY_TIME_LAPSE_LOW  );
+        VIDEO_QUALITY_TO_TIMELAPSE.put(CamcorderProfile.QUALITY_HIGH , CamcorderProfile.QUALITY_TIME_LAPSE_HIGH );
+        VIDEO_QUALITY_TO_TIMELAPSE.put(CamcorderProfile.QUALITY_QCIF , CamcorderProfile.QUALITY_TIME_LAPSE_QCIF );
+        VIDEO_QUALITY_TO_TIMELAPSE.put(CamcorderProfile.QUALITY_CIF  , CamcorderProfile.QUALITY_TIME_LAPSE_CIF  );
+        VIDEO_QUALITY_TO_TIMELAPSE.put(CamcorderProfile.QUALITY_480P , CamcorderProfile.QUALITY_TIME_LAPSE_480P );
+        VIDEO_QUALITY_TO_TIMELAPSE.put(CamcorderProfile.QUALITY_720P , CamcorderProfile.QUALITY_TIME_LAPSE_720P );
+        VIDEO_QUALITY_TO_TIMELAPSE.put(CamcorderProfile.QUALITY_1080P, CamcorderProfile.QUALITY_TIME_LAPSE_1080P);
+        VIDEO_QUALITY_TO_TIMELAPSE.put(CamcorderProfile.QUALITY_QVGA , CamcorderProfile.QUALITY_TIME_LAPSE_QVGA );
+        VIDEO_QUALITY_TO_TIMELAPSE.put(CamcorderProfile.QUALITY_2160P, CamcorderProfile.QUALITY_TIME_LAPSE_2160P);
+        VIDEO_QUALITY_TO_TIMELAPSE.put(CamcorderProfile.QUALITY_VGA  , CamcorderProfile.QUALITY_TIME_LAPSE_VGA  );
+        VIDEO_QUALITY_TO_TIMELAPSE.put(CamcorderProfile.QUALITY_4KDCI, CamcorderProfile.QUALITY_TIME_LAPSE_4KDCI);
+        VIDEO_QUALITY_TO_TIMELAPSE.put(CamcorderProfile.QUALITY_1440P, CamcorderProfile.QUALITY_TIME_LAPSE_1440P);
+   }
+
+   public static int getTimeLapseQualityFor(int quality) {
+       return VIDEO_QUALITY_TO_TIMELAPSE.get(quality);
+   }
+
+   private static final HashMap<Integer, Integer>
+       VIDEO_QUALITY_TO_HIGHSPEED = new HashMap<Integer, Integer>();
+   static {
+        VIDEO_QUALITY_TO_HIGHSPEED.put(CamcorderProfile.QUALITY_LOW  , CamcorderProfile.QUALITY_HIGH_SPEED_LOW  );
+        VIDEO_QUALITY_TO_HIGHSPEED.put(CamcorderProfile.QUALITY_HIGH , CamcorderProfile.QUALITY_HIGH_SPEED_HIGH );
+        VIDEO_QUALITY_TO_HIGHSPEED.put(CamcorderProfile.QUALITY_QCIF , -1 ); // does not exist
+        VIDEO_QUALITY_TO_HIGHSPEED.put(CamcorderProfile.QUALITY_CIF  , CamcorderProfile.QUALITY_HIGH_SPEED_CIF  );
+        VIDEO_QUALITY_TO_HIGHSPEED.put(CamcorderProfile.QUALITY_480P , CamcorderProfile.QUALITY_HIGH_SPEED_480P );
+        VIDEO_QUALITY_TO_HIGHSPEED.put(CamcorderProfile.QUALITY_720P , CamcorderProfile.QUALITY_HIGH_SPEED_720P );
+        VIDEO_QUALITY_TO_HIGHSPEED.put(CamcorderProfile.QUALITY_1080P, CamcorderProfile.QUALITY_HIGH_SPEED_1080P);
+        VIDEO_QUALITY_TO_HIGHSPEED.put(CamcorderProfile.QUALITY_QVGA , -1 ); // does not exist
+        VIDEO_QUALITY_TO_HIGHSPEED.put(CamcorderProfile.QUALITY_2160P, CamcorderProfile.QUALITY_HIGH_SPEED_2160P);
+        VIDEO_QUALITY_TO_HIGHSPEED.put(CamcorderProfile.QUALITY_VGA  , CamcorderProfile.QUALITY_HIGH_SPEED_VGA  );
+        VIDEO_QUALITY_TO_HIGHSPEED.put(CamcorderProfile.QUALITY_4KDCI, CamcorderProfile.QUALITY_HIGH_SPEED_4KDCI);
+   }
+
+   public static int getHighSpeedQualityFor(int quality) {
+       return VIDEO_QUALITY_TO_HIGHSPEED.get(quality);
    }
 
     public CameraSettings(Activity activity, Parameters parameters,
@@ -730,6 +777,7 @@ public class CameraSettings {
         ListPreference sceneMode = group.findPreference(KEY_SCENE_MODE);
         ListPreference flashMode = group.findPreference(KEY_FLASH_MODE);
         ListPreference focusMode = group.findPreference(KEY_FOCUS_MODE);
+        ListPreference videoFocusMode = group.findPreference(KEY_VIDEO_FOCUS_MODE);
         IconListPreference exposure =
                 (IconListPreference) group.findPreference(KEY_EXPOSURE);
         IconListPreference cameraIdPref =
@@ -743,7 +791,7 @@ public class CameraSettings {
         ListPreference videoHfrMode =
                 group.findPreference(KEY_VIDEO_HIGH_FRAME_RATE);
         ListPreference seeMoreMode = group.findPreference(KEY_SEE_MORE);
-        ListPreference videoEncoder = group.findPreference(KEY_VIDEO_ENCODER);
+        //ListPreference videoEncoder = group.findPreference(KEY_VIDEO_ENCODER);
 
         // Since the screen could be loaded from different resources, we need
         // to check if the preference is available here
@@ -762,9 +810,9 @@ public class CameraSettings {
                    mCameraId,mParameters));
         }
 
-        if (videoEncoder != null) {
-            filterUnsupportedOptions(group, videoEncoder, getSupportedVideoEncoders());
-        }
+        //if (videoEncoder != null) {
+        //    filterUnsupportedOptions(group, videoEncoder, getSupportedVideoEncoders());
+        //}
 
         if (pictureSize != null) {
             filterUnsupportedOptions(group, pictureSize, sizeListToStringList(
@@ -801,6 +849,12 @@ public class CameraSettings {
             if (!CameraUtil.isFocusAreaSupported(mParameters)) {
                 filterUnsupportedOptions(group,
                         focusMode, mParameters.getSupportedFocusModes());
+            }
+        }
+        if (videoFocusMode != null) {
+            if (!CameraUtil.isFocusAreaSupported(mParameters)) {
+                filterUnsupportedOptions(group,
+                        videoFocusMode, mParameters.getSupportedFocusModes());
             }
         }
         if (videoFlashMode != null) {
@@ -1152,11 +1206,13 @@ public class CameraSettings {
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     private static void getFineResolutionQuality(ArrayList<String> supported,
                                                  int cameraId,Parameters parameters) {
-        if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_4kDCI)) {
+
+        if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_4KDCI)) {
            if (checkSupportedVideoQuality(parameters,4096,2160)) {
-              supported.add(Integer.toString(CamcorderProfile.QUALITY_4kDCI));
+              supported.add(Integer.toString(CamcorderProfile.QUALITY_4KDCI));
            }
         }
+
         if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_2160P)) {
            if (checkSupportedVideoQuality(parameters,3840,2160)) {
               supported.add(Integer.toString(CamcorderProfile.QUALITY_2160P));
@@ -1175,16 +1231,6 @@ public class CameraSettings {
         if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_480P)) {
            if (checkSupportedVideoQuality(parameters,720,480)){
               supported.add(Integer.toString(CamcorderProfile.QUALITY_480P));
-           }
-        }
-        if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_FWVGA)) {
-           if (checkSupportedVideoQuality(parameters,864,480)){
-              supported.add(Integer.toString(CamcorderProfile.QUALITY_FWVGA));
-           }
-        }
-        if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_WVGA)) {
-           if (checkSupportedVideoQuality(parameters,800,480)){
-              supported.add(Integer.toString(CamcorderProfile.QUALITY_WVGA));
            }
         }
         if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_VGA)) {

@@ -85,7 +85,7 @@ public class CameraUtil {
     public static final String KEY_SHOW_WHEN_LOCKED = "showWhenLocked";
 
     // Orientation hysteresis amount used in rounding, in degrees
-    public static final int ORIENTATION_HYSTERESIS = 5;
+    public static final int ORIENTATION_HYSTERESIS = 10;
 
     public static final String REVIEW_ACTION = "com.android.camera.action.REVIEW";
     // See android.hardware.Camera.ACTION_NEW_PICTURE.
@@ -142,7 +142,8 @@ public class CameraUtil {
     }
 
     public static boolean isVideoSnapshotSupported(Parameters params) {
-        return TRUE.equals(params.get(VIDEO_SNAPSHOT_SUPPORTED));
+        //return TRUE.equals(params.get(VIDEO_SNAPSHOT_SUPPORTED));
+        return false;
     }
 
     public static boolean isCameraHdrSupported(Parameters params) {
@@ -473,7 +474,7 @@ public class CameraUtil {
         } else {
             int dist = Math.abs(orientation - orientationHistory);
             dist = Math.min( dist, 360 - dist );
-            changeOrientation = ( dist >= 45 + ORIENTATION_HYSTERESIS );
+            changeOrientation = ( dist >= 60 + ORIENTATION_HYSTERESIS );
         }
         if (changeOrientation) {
             return ((orientation + 45) / 90 * 90) % 360;
@@ -503,7 +504,7 @@ public class CameraUtil {
     public static int getOptimalPreviewSize(Activity currentActivity,
             Point[] sizes, double targetRatio) {
         // Use a very small tolerance because we want an exact match.
-        final double ASPECT_TOLERANCE = 0.01;
+        final double ASPECT_TOLERANCE = 0.02;
         if (sizes == null) return -1;
 
         int optimalSizeIndex = -1;
@@ -942,6 +943,15 @@ public class CameraUtil {
             return frameRates.get(frameRates.size() - 1);
         }
         return new int[0];
+    }
+
+    public static int getMaxPreviewFps(Parameters params) {
+        List<Integer> frameRates = params.getSupportedPreviewFrameRates();
+        if (frameRates != null && frameRates.size() > 0) {
+            // The list is sorted. Return the last element.
+            return frameRates.get(frameRates.size() - 1).intValue();
+        }
+        return -1;
     }
 
     private static class ImageFileNamer {

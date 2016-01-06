@@ -395,6 +395,7 @@
          <item>@string/pref_camera_iso_entry_iso400</item>
          <item>@string/pref_camera_iso_entry_iso800</item>
          <item>@string/pref_camera_iso_entry_iso1600</item>
+         <item>@string/pref_camera_iso_entry_iso3200</item>
     </string-array>
 
     <!-- Do not localize entryvalues -->
@@ -406,6 +407,7 @@
          <item>@string/pref_camera_iso_value_iso400</item>
          <item>@string/pref_camera_iso_value_iso800</item>
          <item>@string/pref_camera_iso_value_iso1600</item>
+         <item>@string/pref_camera_iso_value_iso3200</item>
      </string-array>
 
     <!-- Camera Preferences Anti Banding dialog box entries -->
@@ -413,14 +415,12 @@
          <item>@string/pref_camera_antibanding_entry_0</item>
          <item>@string/pref_camera_antibanding_entry_1</item>
          <item>@string/pref_camera_antibanding_entry_2</item>
-         <item>@string/pref_camera_antibanding_entry_3</item>
      </string-array>
 
      <string-array name="pref_camera_antibanding_entryvalues">
-         <item>off</item>
+         <item>auto</item>
          <item>50hz</item>
          <item>60hz</item>
-         <item>auto</item>
      </string-array>
 
      <!-- Camera Preferences Histogram dialog box entries -->
@@ -502,15 +502,15 @@
 
     <!-- Camera Preferences Auto Exposure dialog box entries -->
      <string-array name="pref_camera_autoexposure_entries">
-         <item>@string/pref_camera_autoexposure_entry_frameaverage</item>
          <item>@string/pref_camera_autoexposure_entry_centerweighted</item>
+         <item>@string/pref_camera_autoexposure_entry_frameaverage</item>
          <item>@string/pref_camera_autoexposure_entry_spotmetering</item>
      </string-array>
 
      <!-- Do not localize entryvalues -->
      <string-array name="pref_camera_autoexposure_entryvalues">
-         <item>@string/pref_camera_autoexposure_value_frameaverage</item>
          <item>@string/pref_camera_autoexposure_value_centerweighted</item>
+         <item>@string/pref_camera_autoexposure_value_frameaverage</item>
          <item>@string/pref_camera_autoexposure_value_spotmetering</item>
      </string-array>
     <!-- Camera Preferences Video Encoder dialog box entries -->
@@ -580,16 +580,16 @@
     <!-- Camera Preferences Selectable Zone AF dialog box entries -->
     <string-array name="pref_camera_selectablezoneaf_entries" translatable="false">
         <item>@string/pref_camera_selectablezoneaf_entry_auto</item>
-        <item>@string/pref_camera_selectablezoneaf_entry_spotmetering</item>
         <item>@string/pref_camera_selectablezoneaf_entry_centerweighted</item>
         <item>@string/pref_camera_selectablezoneaf_entry_frameaverage</item>
+        <item>@string/pref_camera_selectablezoneaf_entry_spotmetering</item>
     </string-array>
 
     <string-array name="pref_camera_selectablezoneaf_entryvalues" translatable="false">
          <item>@string/pref_camera_selectablezoneaf_value_auto</item>
-         <item>@string/pref_camera_selectablezoneaf_value_spotmetering</item>
          <item>@string/pref_camera_selectablezoneaf_value_centerweighted</item>
          <item>@string/pref_camera_selectablezoneaf_value_frameaverage</item>
+         <item>@string/pref_camera_selectablezoneaf_value_spotmetering</item>
     </string-array>
 
 
@@ -689,13 +689,13 @@
 
     <!-- AUTO HDR  dialog box entries -->
     <string-array name="pref_camera_auto_hdr_entries" translatable="false">
-    <item>@string/pref_camera_auto_hdr_entry_enable</item>
     <item>@string/pref_camera_auto_hdr_entry_disable</item>
+    <item>@string/pref_camera_auto_hdr_entry_enable</item>
     </string-array>
 
     <string-array name="pref_camera_auto_hdr_entryvalues" translatable="false">
-    <item>@string/pref_camera_auto_hdr_value_enable</item>
     <item>@string/pref_camera_auto_hdr_value_disable</item>
+    <item>@string/pref_camera_auto_hdr_value_enable</item>
     </string-array>
 
     <!-- CDS  dialog box entries -->
@@ -805,6 +805,60 @@
     <string-array name="pref_ts_makeup_icons" translatable="false">
         <item>@drawable/ic_ts_makeup_off</item>
         <item>@drawable/ic_ts_makeup_on</item>
+    </string-array>
+
+    <string-array name="pref_camera_touchfocus_duration_entries" translatable="false">
+        <item>@string/pref_camera_touchfocus_duration_entry_0</item>
+        <item>@string/pref_camera_touchfocus_duration_entry_3</item>
+        <item>@string/pref_camera_touchfocus_duration_entry_5</item>
+        <item>@string/pref_camera_touchfocus_duration_entry_10</item>
+        <item>@string/pref_camera_touchfocus_duration_entry_infinity</item>
+    </string-array>
+
+    <string-array name="pref_camera_touchfocus_duration_entry_values" translatable="false">
+        <item>@string/pref_camera_touchfocus_duration_value_0</item>
+        <item>@string/pref_camera_touchfocus_duration_value_3</item>
+        <item>@string/pref_camera_touchfocus_duration_value_5</item>
+        <item>@string/pref_camera_touchfocus_duration_value_10</item>
+        <item>@string/pref_camera_touchfocus_duration_value_infinity</item>
+    </string-array>
+
+    <string-array name="pref_camera_shutter_speed_entries" translatable="false">
+        <item>@string/pref_camera_shutter_speed_entry_off</item>
+        <item>@string/pref_camera_shutter_speed_entry_1_5000th</item>
+        <item>@string/pref_camera_shutter_speed_entry_1_2500th</item>
+        <item>@string/pref_camera_shutter_speed_entry_1_1500th</item>
+        <item>@string/pref_camera_shutter_speed_entry_1_1000th</item>
+        <item>@string/pref_camera_shutter_speed_entry_1_500th</item>
+        <item>@string/pref_camera_shutter_speed_entry_1_250th</item>
+        <item>@string/pref_camera_shutter_speed_entry_1_125th</item>
+        <item>@string/pref_camera_shutter_speed_entry_1_64th</item>
+        <item>@string/pref_camera_shutter_speed_entry_1_32nd</item>
+        <item>@string/pref_camera_shutter_speed_entry_1_16th</item>
+        <item>@string/pref_camera_shutter_speed_entry_1_8th</item>
+        <item>@string/pref_camera_shutter_speed_entry_1_4th</item>
+        <item>@string/pref_camera_shutter_speed_entry_1_2</item>
+        <item>@string/pref_camera_shutter_speed_entry_1</item>
+        <item>@string/pref_camera_shutter_speed_entry_2</item>
+    </string-array>
+
+    <string-array name="pref_camera_shutter_speed_entry_values" translatable="false">
+        <item>@string/pref_camera_shutter_speed_value_off</item>
+        <item>@string/pref_camera_shutter_speed_value_1_5000th</item>
+        <item>@string/pref_camera_shutter_speed_value_1_2500th</item>
+        <item>@string/pref_camera_shutter_speed_value_1_1500th</item>
+        <item>@string/pref_camera_shutter_speed_value_1_1000th</item>
+        <item>@string/pref_camera_shutter_speed_value_1_500th</item>
+        <item>@string/pref_camera_shutter_speed_value_1_250th</item>
+        <item>@string/pref_camera_shutter_speed_value_1_125th</item>
+        <item>@string/pref_camera_shutter_speed_value_1_64th</item>
+        <item>@string/pref_camera_shutter_speed_value_1_32nd</item>
+        <item>@string/pref_camera_shutter_speed_value_1_16th</item>
+        <item>@string/pref_camera_shutter_speed_value_1_8th</item>
+        <item>@string/pref_camera_shutter_speed_value_1_4th</item>
+        <item>@string/pref_camera_shutter_speed_value_1_2</item>
+        <item>@string/pref_camera_shutter_speed_value_1</item>
+        <item>@string/pref_camera_shutter_speed_value_2</item>
     </string-array>
 
 </resources>
